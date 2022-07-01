@@ -2,7 +2,8 @@
 
 ## Overview
 
-This ROS package implements a line following robot which follows a yellow line using Turtlebot3. 
+This ROS package implements a line following robot which detects the yellow line using the camera on Turtlebot3 Waffle Pi with the aid of image processing techniques and follows that line.
+
 ## Installation
 
 Build from source, clone from this repository into your catkin workspace and compile the package using:
@@ -10,43 +11,22 @@ Build from source, clone from this repository into your catkin workspace and com
     git clone https://github.com/saiv20/line_follow.git
     cd ..
     catkin_make
+    
+Install the dependencies:
 
-## Simultaneous Localization and Mapping (SLAM)
+    sudo apt-get update
+    sudo apt-get install ros-melodic-turtlebot3*
+    
+## Line Following Robot
 
-Simultaneous Localization and Mapping (SLAM) is implemented using slam_gmapping. The robot is spawed on Gazebo and we can move the robot around in the Gazebo environment.  
+1. Launch Gazebo with the world `line_follow1.world` and spawn Turtlebot3 Waffle Pi. We are using Turtlebot3 Waffle Pi instead of Turtlebot3 Burger as Waffle Pi comes with a built in camera, which is required in our case. To read more about Turtlebot3 click [here](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/). The inital position and pose of the robot is also set here.
 
-1. Launch Gazebo and spawn the robot in Gazebo environment. This launches with the world file `world1` in the worlds directory. Then, the `slam_gmapping` node is launched. RViz is also launched, which can be used to visualize the map being created.
-
-	    roslaunch multirobot_tb gmapping.launch
-
-2. Once the robot is spawned, we now proceed to moving the robot around the Gazebo environment. As we move the robot along the environment, we notice that the RViz map is simultaneously being updated. Keep moving the robot around the environment until a satisfactory map is obtained. 
-
-	    roslaunch multirobot_tb teleop.launch
-            
-3. Once a satisfactory map is obtained, save the map and copy the map to `~/multirobot_tb/maps/` directory.
-	      
-        rosrun map_server map_saver -f ~/map_one
-  
-## Navigation of Multiple Robots
-
-Once the map is generated, we can proceed to the navigation of multiple robots. This is achieved using the ROS Navigation Stack.  
-
-1. Launch Gazebo and spawn multiple robots in Gazebo environment. Here, we are spawning 3 robots.
-
-	    roslaunch multirobot_tb main.launch
-
-The following Gazebo window opens:
-
-![Gzb](https://github.com/saiv20/multirobot_tb/blob/main/imgs/S1.png)
-
-2. Now we launch the rviz, move_base, and amcl nodes 
-
-	    roslaunch multirobot_tb navigation.launch
+	roslaunch line_follow follower1_world.launch
 	
-![RViz](https://github.com/saiv20/multirobot_tb/blob/main/imgs/S2.png)
-            
-3. In RViz, set the 2D Pose estimate topic (under tool properties in the image shown above) to `/robot1/initialpose`. Once the topics are assigned, set the initial pose estimate of the robot by clicking on **2D Pose Estimate**. Similarly for the second robot, set the 2D Pose estimate topic to `/robot2/initialpose`. Follow the steps and assign the initial pose estimate of all robots by replacing robot1 with the name of the robot.
+2. Launch the script that performs image processing and identifies the yellow line and follows it. The image processing is done using OpenCV and cv_bridge.
 
-4. Set the 2D Nav Goal Topic to `/robot1/move_base_simple/goal` and click on **2D Nav Goal** and set the goal location and pose to move robot1. To move robot2, follow the same step by replacing robot1 with robot2 in 2D Nav Goal Topic. Repeat the steps for other robots by replacing robot1 with the name of the robot. This will move the corresponding robot to its goal location and pose.
+	roslaunch line_follow linefollow.launch
+  
+
   
   
