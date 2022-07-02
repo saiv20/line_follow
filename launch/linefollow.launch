@@ -1,0 +1,4 @@
+<launch>   
+    <!-- Start teleop node -->
+    <node pkg="line_follow" type="follower1.py" name="follower" output="screen"/>
+</launch>
